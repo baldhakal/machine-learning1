@@ -10,7 +10,7 @@ class DataLoader:
 
     def __init__(self, images, labels, num_classes):
         if images.shape[0] != labels.shape[0]:
-            raise ValueError('images.shape: %s labels.shape: %s' % (images.shape, labels.shape))
+            raise ValueError(f'images.shape: {images.shape} labels.shape: {labels.shape}')
 
         self.num_classes = num_classes
         self._images = images

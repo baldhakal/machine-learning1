@@ -47,7 +47,7 @@ class KerasWord2VecVectorizer(BaseEstimator, TransformerMixin):
         if self.sort_vocab and self.use_sampling_table:
             sampling_table = make_sampling_table(self.vocab_size_)
 
-        for epoch in trange(self.epochs):
+        for _ in trange(self.epochs):
             (batch_center,
              batch_context,
              batch_label) = generate_batch_data(
@@ -59,24 +59,23 @@ class KerasWord2VecVectorizer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         embed_in = self._get_word_vectors()
-        X_embeddings = np.array([self._get_embedding(words, embed_in) for words in X])
-        return X_embeddings
+        return np.array([self._get_embedding(words, embed_in) for words in X])
 
     def _get_word_vectors(self):
         return self.model_.get_layer('embed_in').get_weights()[0]
 
     def _get_embedding(self, words, embed_in):
 
-        valid_words = [word for word in words if word in self.word2index_]
-        if valid_words:
-            embedding = np.zeros((len(valid_words), self.embed_size), dtype=np.float32)
-            for idx, word in enumerate(valid_words):
-                word_idx = self.word2index_[word]
-                embedding[idx] = embed_in[word_idx]
-
-            return np.mean(embedding, axis=0)
-        else:
+        if not (
+            valid_words := [word for word in words if word in self.word2index_]
+        ):
             return np.zeros(self.embed_size)
+        embedding = np.zeros((len(valid_words), self.embed_size), dtype=np.float32)
+        for idx, word in enumerate(valid_words):
+            word_idx = self.word2index_[word]
+            embedding[idx] = embed_in[word_idx]
+
+        return np.mean(embedding, axis=0)
 
     def build_vocab(self, texts):
 

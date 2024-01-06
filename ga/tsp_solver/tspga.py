@@ -226,8 +226,7 @@ class TSPGA(object):
 		subset  = slice( pos_start, pos_end )
 		boolean = np.in1d( female, male[subset], invert = True )
 		not_in_male = female[boolean]
-		child = np.r_[ not_in_male[:pos_start], male[subset], not_in_male[pos_start:] ]		
-		return child
+		return np.r_[ not_in_male[:pos_start], male[subset], not_in_male[pos_start:] ]
 
 
 	def _mutate( self, child ):

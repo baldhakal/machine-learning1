@@ -98,28 +98,23 @@ class SoftmaxRegression:
         return X, y_encode
 
     def _net_input(self, X):
-        net = X.dot(self.w) + self.b
-        return net
+        return X.dot(self.w) + self.b
 
     def _softmax(self, z):
-        softm = np.exp(z) / np.sum(np.exp(z), axis = 1, keepdims = True)
-        return softm
+        return np.exp(z) / np.sum(np.exp(z), axis = 1, keepdims = True)
 
     def _cross_entropy_cost(self, output, y_target):
         cross_entropy = np.mean(-np.sum(np.log(output) * y_target, axis = 1))
         l2_penalty = 0.5 * self.l2 * np.sum(self.w ** 2)
-        cost = cross_entropy + l2_penalty
-        return cost
+        return cross_entropy + l2_penalty
 
     def predict_proba(self, X):
         if not self._is_fitted:
             raise AttributeError('Model is not fitted, yet!')
 
         net = self._net_input(X)
-        softm = self._softmax(net)
-        return softm
+        return self._softmax(net)
 
     def predict(self, X):
         softm = self.predict_proba(X)
-        class_labels = np.argmax(softm, axis = 1)
-        return class_labels
+        return np.argmax(softm, axis = 1)

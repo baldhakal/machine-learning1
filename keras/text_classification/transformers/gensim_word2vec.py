@@ -58,16 +58,15 @@ class GensimWord2VecVectorizer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X_embeddings = np.array([self._get_embedding(words) for words in X])
-        return X_embeddings
+        return np.array([self._get_embedding(words) for words in X])
 
     def _get_embedding(self, words):
-        valid_words = [word for word in words if word in self.model_.wv.vocab]
-        if valid_words:
-            embedding = np.zeros((len(valid_words), self.size), dtype=np.float32)
-            for idx, word in enumerate(valid_words):
-                embedding[idx] = self.model_.wv[word]
-
-            return np.mean(embedding, axis=0)
-        else:
+        if not (
+            valid_words := [word for word in words if word in self.model_.wv.vocab]
+        ):
             return np.zeros(self.size)
+        embedding = np.zeros((len(valid_words), self.size), dtype=np.float32)
+        for idx, word in enumerate(valid_words):
+            embedding[idx] = self.model_.wv[word]
+
+        return np.mean(embedding, axis=0)

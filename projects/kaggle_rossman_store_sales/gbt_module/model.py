@@ -139,7 +139,7 @@ class GBTPipeline(BaseEstimator):
         import os
         from joblib import dump
 
-        model_checkpoint = self.model_id + '.pkl' if path is None else path
+        model_checkpoint = f'{self.model_id}.pkl' if path is None else path
 
         # create the directory if it's not the current directory and it doesn't exist already
         model_dir = os.path.split(model_checkpoint)[0]
@@ -152,5 +152,4 @@ class GBTPipeline(BaseEstimator):
     @classmethod
     def load(cls, path):
         from joblib import load
-        loaded_model = load(path)
-        return loaded_model
+        return load(path)

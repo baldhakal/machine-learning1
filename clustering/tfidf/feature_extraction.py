@@ -138,9 +138,8 @@ class CountVectorizer(BaseEstimator):
 
         # information to create sparse csr_matrix
         values = []
-        indptr = []
         indices = []
-        indptr.append(0)
+        indptr = [0]
         for doc in raw_documents:
             # maps feature index to count
             feature_counter = {}
@@ -179,8 +178,9 @@ class CountVectorizer(BaseEstimator):
             stop_words = self._get_stop_words()
             return lambda doc: self._word_ngrams(tokenize(doc), stop_words)
         else:
-            raise ValueError('{} is not a valid tokenization scheme/analyzer'.format(
-                             self.analyzer))
+            raise ValueError(
+                f'{self.analyzer} is not a valid tokenization scheme/analyzer'
+            )
 
     def _build_tokenizer(self):
         """Returns a function that splits a string into a sequence of tokens"""
@@ -209,9 +209,7 @@ class CountVectorizer(BaseEstimator):
 
         # handle token n-grams
         min_n, max_n = self.ngram_range
-        if max_n == 1:
-            return tokens
-        else:
+        if max_n != 1:
             original_tokens = list(tokens)
             n_original_tokens = len(original_tokens)
             if min_n == 1:
@@ -229,7 +227,7 @@ class CountVectorizer(BaseEstimator):
                 for i in range(n_original_tokens - n + 1):
                     tokens_append(space_join(original_tokens[i:i + n]))
 
-            return tokens
+        return tokens
 
     def transform(self, raw_documents):
         """

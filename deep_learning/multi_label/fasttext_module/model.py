@@ -252,10 +252,9 @@ class FasttextPipeline:
         # note that it should be done after the tokenization to prevent the tokenizer
         # from modifying the new line symbol
         tokenized_texts = [text + '\n' for text in texts]
-        batch_predictions = self.model_.f.multilinePredict(
-            tokenized_texts, k, threshold, on_unicode_error)
-
-        return batch_predictions
+        return self.model_.f.multilinePredict(
+            tokenized_texts, k, threshold, on_unicode_error
+        )
 
 
 def fit_and_score(fasttext_file_path_train: str,
@@ -352,8 +351,7 @@ def fit_fasttext(fasttext_file_path: str,
     current_params = deepcopy(fasttext_params)
     current_params.update(params)
     current_params['input'] = fasttext_file_path
-    model = fasttext.train_supervised(**current_params)
-    return model
+    return fasttext.train_supervised(**current_params)
 
 
 def score(model: fasttext.FastText._FastText,

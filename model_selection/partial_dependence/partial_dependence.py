@@ -131,8 +131,8 @@ class PartialDependenceExplainer:
 
         target = data[feature_name]
         unique_target = np.unique(target)
-        n_unique = unique_target.size
         if feature_type == 'num':
+            n_unique = unique_target.size
             if self.n_grid_points >= n_unique:
                 feature_grid = unique_target
             else:
@@ -145,8 +145,9 @@ class PartialDependenceExplainer:
             feature_cols = feature_grid
         else:
             feature_grid = unique_target
-            feature_cols = np.asarray(['{}_{}'.format(feature_name, category)
-                                       for category in unique_target])
+            feature_cols = np.asarray(
+                [f'{feature_name}_{category}' for category in unique_target]
+            )
 
         # compute prediction batch by batch to save memory usage
         n_rows = data.shape[0]
@@ -204,8 +205,8 @@ class PartialDependenceExplainer:
 
     def _plot_title(self, ax):
         font_family = 'Arial'
-        title = 'Partial Dependence Plot for {}'.format(self.feature_name_)
-        subtitle = 'Number of unique grid points: {}'.format(self.feature_grid_.size)
+        title = f'Partial Dependence Plot for {self.feature_name_}'
+        subtitle = f'Number of unique grid points: {self.feature_grid_.size}'
         title_fontsize = 15
         subtitle_fontsize = 12
 
@@ -302,11 +303,7 @@ def _predict_batch(data_batch, feature_grid, feature_name,
     results = []
     prediction = predict(ice_data)
     for n_class in range(n_classes):
-        if is_classifier:
-            result = prediction[:, n_class]
-        else:
-            result = prediction
-
+        result = prediction[:, n_class] if is_classifier else prediction
         # reshape tiled data back to original batch's shape
         reshaped = result.reshape((data_batch.shape[0], feature_grid.size))
         result = pd.DataFrame(reshaped)

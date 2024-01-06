@@ -55,13 +55,12 @@ def define_extensions(use_cython, use_openmp):
     worry about is the modules part, where we define the extension that
     needs to be compiled
     """
+    # compile args from
+    # https://msdn.microsoft.com/en-us/library/fwkeyyhe.aspx
+    link_args = []
     if sys.platform.startswith('win'):
-        # compile args from
-        # https://msdn.microsoft.com/en-us/library/fwkeyyhe.aspx
-        link_args = []
         compile_args = ['/O2', '/openmp']
     else:
-        link_args = []
         compile_args = ['-Wno-unused-function', '-Wno-maybe-uninitialized', '-O3', '-ffast-math']
         if use_openmp:
             compile_args.append('-fopenmp')
@@ -81,10 +80,7 @@ def define_extensions(use_cython, use_openmp):
                          extra_compile_args = compile_args,
                          extra_link_args = link_args) for name in names]
 
-    if use_cython:
-        return cythonize(modules)
-    else:
-        return modules
+    return cythonize(modules) if use_cython else modules
 
 
 USE_OPENMP = set_gcc(USE_OPENMP)

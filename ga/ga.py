@@ -113,8 +113,7 @@ class GA:
 		index1, index2 = random.sample( range(self.retain_len), k = 2 )
 		male, female = parent[index1], parent[index2]
 		pivot = len(male) // 2
-		child = male[:pivot] + female[pivot:]
-		return child
+		return male[:pivot] + female[pivot:]
 
 
 	def _mutate(self, child):

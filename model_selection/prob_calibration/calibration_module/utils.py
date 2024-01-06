@@ -279,13 +279,11 @@ def compute_calibration_summary(
         plt.show()
 
     if save_plot_path is not None:
-        save_dir = os.path.dirname(save_plot_path)
-        if save_dir:
+        if save_dir := os.path.dirname(save_plot_path):
             os.makedirs(save_dir, exist_ok=True)
 
         fig.savefig(save_plot_path, dpi=300, bbox_inches='tight')
 
     plt.close(fig)
 
-    df_metrics = pd.DataFrame(estimator_metrics)
-    return df_metrics
+    return pd.DataFrame(estimator_metrics)
