@@ -25,7 +25,7 @@ def main(ml_repo, knowledge_repo, inplace):
 
 
 def init_knowledge_repo(path):
-    cmd = 'knowledge_repo --repo {} init'.format(path)
+    cmd = f'knowledge_repo --repo {path} init'
     subprocess.call(cmd, shell=True)
 
 
@@ -44,7 +44,7 @@ def convert_all_posts(path, knowledge_repo_path, inplace):
                 notebook = converter.convert(path)
                 converter.add(notebook)
             except Exception as e:
-                print('Skipping: {}'.format(path))
+                print(f'Skipping: {path}')
                 print(e)
 
 
@@ -139,20 +139,19 @@ class IpynbConverter:
 
     def _date_created(self, path):
         """Grab the date of creation through git log."""
-        cmd = 'git log --diff-filter=A --follow --format=%cd -1 -- {}'.format(path)
+        cmd = f'git log --diff-filter=A --follow --format=%cd -1 -- {path}'
         return self._git_date_cmd(cmd)
 
     def _date_updated(self, path):
         """Grab the last date modified through git log."""
-        cmd = 'git log --format=%cd -1 -- {}'.format(path)
+        cmd = f'git log --format=%cd -1 -- {path}'
         return self._git_date_cmd(cmd)
 
     def _git_date_cmd(self, cmd):
         """Run bash command to retrieve and format date string."""
         date_str = subprocess.check_output(cmd, shell=True)
         date_dt = date_parser.parse(date_str)
-        formatted_date = date_dt.strftime(self.DATE_FORMAT)
-        return formatted_date
+        return date_dt.strftime(self.DATE_FORMAT)
 
     def _tags_and_github_link(self, path):
         """
@@ -187,7 +186,7 @@ class IpynbConverter:
                     # newer version of notebooks includes a
                     # Table of Contents automatically in the first
                     # cell, skip that and find the next level 1 header
-                    if not title == 'Table of Contents':
+                    if title != 'Table of Contents':
                         break
         return title
 
@@ -219,11 +218,12 @@ class IpynbConverter:
             'authors:',
             '- {}'.format(self.AUTHOR),
             'tags:',
-            '- ' + self.tags_,
+            f'- {self.tags_}',
             'created_at: {}'.format(self.date_created_),
             'updated_at: {}'.format(self.date_updated_),
             'tldr: Nothing for tldr section as of now.',
-            '---']
+            '---',
+        ]
 
         header_text = flatten_list(header_text)
         header_text = [text + '\n' for text in header_text[:-1]] + [header_text[-1]]
@@ -232,11 +232,11 @@ class IpynbConverter:
 
     def _construct_github_link_cell(self):
         """Add a cell that contains link to original notebook on github"""
-        github_link_cell = {
+        return {
             'cell_type': 'markdown',
             'metadata': {},
-            'source': ['Link to original notebook: {}'.format(self.github_link_)]}
-        return github_link_cell
+            'source': [f'Link to original notebook: {self.github_link_}'],
+        }
 
     def add(self, notebook):
         """
@@ -252,8 +252,7 @@ class IpynbConverter:
 
         # create a run knowledge repo command
         destination = os.path.join(self.knowledge_repo_path, 'project', self.tags_)
-        cmd = 'knowledge_repo --repo {} add {} -p {}'.format(
-            self.knowledge_repo_path, self._path, destination)
+        cmd = f'knowledge_repo --repo {self.knowledge_repo_path} add {self._path} -p {destination}'
 
         # communicate with the shell output to enable
         # continuation of the script execution

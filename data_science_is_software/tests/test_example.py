@@ -6,8 +6,7 @@ import pandas as pd
 def df():
 	"""read in the raw data file and return the dataframe"""
 	pump_data_path = os.path.join( 'data', 'raw', 'pumps_train_values.csv' )
-	df = pd.read_csv(pump_data_path)
-	return df
+	return pd.read_csv(pump_data_path)
 
 
 def test_df_fixture(df):

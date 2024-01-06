@@ -48,8 +48,7 @@ class ImageEncoder(nn.Module):
 
     def forward(self, img_arr):
         image_feature = self.model(img_arr)
-        image_embedding = self.projection(image_feature)
-        return image_embedding
+        return self.projection(image_feature)
 
 
 class TextEncoder(nn.Module):
@@ -71,11 +70,10 @@ class TextEncoder(nn.Module):
 
     def forward(self, input_ids, attention_mask):
         output = self.model(input_ids=input_ids, attention_mask=attention_mask)
-        
+
         # we are using CLS token hidden representation as sentence's embedding
         text_feature = output.last_hidden_state[:, 0, :]
-        text_embedding = self.projection(text_feature)
-        return text_embedding
+        return self.projection(text_feature)
 
 
 class ClipModel(pl.LightningModule):
@@ -169,9 +167,8 @@ class ClipModel(pl.LightningModule):
         return loss
     
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(
+        return torch.optim.Adam(
             self.parameters(),
             lr=self.config.lr,
-            weight_decay=self.config.weight_decay
+            weight_decay=self.config.weight_decay,
         )
-        return optimizer

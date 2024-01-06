@@ -109,10 +109,7 @@ def normalize_text(text, stop_words):
     # lower case & tokenize text
     tokens = re.split(r'\s+', text.lower().strip())
 
-    # filter stopwords out of text &
-    # re-create text from filtered tokens
-    cleaned_text = ' '.join(token for token in tokens if token not in stop_words)
-    return cleaned_text
+    return ' '.join(token for token in tokens if token not in stop_words)
 
 
 def export_bigrams(unigram_path, bigram_path, phrase_model):

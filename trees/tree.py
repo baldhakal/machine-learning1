@@ -50,8 +50,7 @@ class Tree:
 
     def predict(self, X):
         proba = self.predict_proba(X)
-        pred = np.argmax(proba, axis = 1)
-        return pred
+        return np.argmax(proba, axis = 1)
 
     def predict_proba(self, X):
         proba = np.empty((X.shape[0], self.n_class))
@@ -64,11 +63,10 @@ class Tree:
         """Predict single row"""
         if tree['is_leaf']:
             return tree['prob']
+        if row[tree['split_col']] <= tree['threshold']:
+            return self._predict_row(row, tree['left'])
         else:
-            if row[tree['split_col']] <= tree['threshold']:
-                return self._predict_row(row, tree['left'])
-            else:
-                return self._predict_row(row, tree['right'])
+            return self._predict_row(row, tree['right'])
 
 
 def _create_decision_tree(X, y, max_depth,
@@ -102,15 +100,14 @@ def _create_decision_tree(X, y, max_depth,
         # still get assign a probability of 0
         counts = np.bincount(y, minlength = n_class)
         prob = counts / y.shape[0]
-        leaf = {'is_leaf': True, 'prob': prob}
-        return leaf
-
-    node = {'is_leaf': False,
-            'left': left_child,
-            'right': right_child,
-            'split_col': column,
-            'threshold': value}
-    return node
+        return {'is_leaf': True, 'prob': prob}
+    return {
+        'is_leaf': False,
+        'left': left_child,
+        'right': right_child,
+        'split_col': column,
+        'threshold': value,
+    }
 
 
 def _find_best_split(X, y, max_features):
@@ -135,8 +132,7 @@ def _compute_entropy(split):
     """entropy score using a fix log base 2"""
     _, counts = np.unique(split, return_counts = True)
     p = counts / split.shape[0]
-    entropy = -np.sum(p * np.log2(p))
-    return entropy
+    return -np.sum(p * np.log2(p))
 
 
 def _find_splits(X, column):
@@ -156,11 +152,10 @@ def _find_splits(X, column):
 
 def _compute_splits_entropy(y, splits):
     """compute the entropy for the splits (the two child nodes)"""
-    splits_entropy = 0
-    for split in splits:
-        splits_entropy += (split.shape[0] / y.shape[0]) * _compute_entropy(split)
-
-    return splits_entropy
+    return sum(
+        (split.shape[0] / y.shape[0]) * _compute_entropy(split)
+        for split in splits
+    )
 
 
 def _split(X, y, column, value, return_X = True):
@@ -171,9 +166,8 @@ def _split(X, y, column, value, return_X = True):
 
     if not return_X:
         return left_y, right_y
-    else:
-        left_X, right_X = X[left_mask], X[right_mask]
-        return left_X, right_X, left_y, right_y
+    left_X, right_X = X[left_mask], X[right_mask]
+    return left_X, right_X, left_y, right_y
 
 
 __all__ = [Tree]

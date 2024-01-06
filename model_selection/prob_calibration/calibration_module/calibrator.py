@@ -140,8 +140,7 @@ class PlattCalibrator(BaseEstimator):
         if self.log_odds:
             y_prob = self._convert_to_log_odds(y_prob)
 
-        output = self._transform(y_prob)
-        return output
+        return self._transform(y_prob)
 
     def _transform(self, y_prob: np.ndarray) -> np.ndarray:
         output = y_prob * self.coef_[0] + self.intercept_
@@ -174,8 +173,7 @@ class PlattCalibrator(BaseEstimator):
         self.coef_ = logistic.coef_[0]
         self.intercept_ = logistic.intercept_
 
-        y_calibrated_prob = self._transform(y_prob)
-        return y_calibrated_prob
+        return self._transform(y_prob)
 
 
 class PlattHistogramCalibrator(PlattCalibrator):

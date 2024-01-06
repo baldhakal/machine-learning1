@@ -101,8 +101,8 @@ class H2OPartialDependenceExplainer:
 
     def _plot_title(self, ax):
         font_family = 'Arial'
-        title = "Partial Dependence Plot for '{}' feature".format(self.feature_name_)
-        subtitle = 'Number of unique grid points: {}'.format(self.partial_dep_.shape[0])
+        title = f"Partial Dependence Plot for '{self.feature_name_}' feature"
+        subtitle = f'Number of unique grid points: {self.partial_dep_.shape[0]}'
         title_fontsize = 15
         subtitle_fontsize = 12
 
@@ -120,8 +120,6 @@ class H2OPartialDependenceExplainer:
         pd_linewidth = 2
         pd_markersize = 5
         pd_color = '#1A4E5D'
-        fill_alpha = 0.2
-        fill_color = '#66C2D7'
         zero_linewidth = 1.5
         zero_color = '#E75438'
         xlabel_fontsize = 10
@@ -146,6 +144,8 @@ class H2OPartialDependenceExplainer:
             linestyle='--', linewidth=zero_linewidth)
 
         if plot_stddev:
+            fill_alpha = 0.2
+            fill_color = '#66C2D7'
             ax.fill_between(x, upper, lower, alpha=fill_alpha, color=fill_color)
 
         ax.set_xlabel(self.feature_name_, fontsize=xlabel_fontsize)

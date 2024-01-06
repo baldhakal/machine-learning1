@@ -106,12 +106,11 @@ def build_data_loaders(config, df, tokenizer, mode):
         config.text_max_length,
     )
     data_collator = DataCollatorForClip(tokenizer)
-    data_loader = DataLoader(
+    return DataLoader(
         dataset,
         batch_size=config.batch_size,
         num_workers=config.num_workers,
         collate_fn=data_collator,
         pin_memory=True,
-        shuffle=True if mode == "train" else False
+        shuffle=mode == "train",
     )
-    return data_loader

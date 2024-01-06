@@ -24,4 +24,4 @@ def prepend_file_name(path: str, name: str) -> str:
     """
     directory = os.path.dirname(path)
     file_name = os.path.basename(path)
-    return os.path.join(directory, name + '_' + file_name)
+    return os.path.join(directory, f'{name}_{file_name}')
